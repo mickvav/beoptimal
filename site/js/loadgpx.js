@@ -141,17 +141,20 @@ GPXParser.prototype.addTrackSegmentToMap = function(trackSegment, colour,
     }
 
     var pointarray = [];
-
+    var tpointarray= [];
     // process first point
     var lastlon = parseFloat(trackpoints[0].getAttribute("lon"));
     var lastlat = parseFloat(trackpoints[0].getAttribute("lat"));
+    var lasttime = trackpoints[0].getElementsByTagName("time")[0].textContent;
     var latlng = new google.maps.LatLng(lastlat,lastlon);
     pointarray.push(latlng);
-
+    tpointarray.push({ll : latlng, time: Date.parse(lasttime) }); 
     for(var i = 1; i < trackpoints.length; i++) {
         var lon = parseFloat(trackpoints[i].getAttribute("lon"));
         var lat = parseFloat(trackpoints[i].getAttribute("lat"));
 
+        var lasttime = trackpoints[i].getElementsByTagName("time")[0].textContent;
+        tpointarray.push({ll : latlng, time:Date.parse(lasttime) }); 
         // Verify that this is far enough away from the last point to be used.
         var latdiff = lat - lastlat;
         var londiff = lon - lastlon;
@@ -171,14 +174,18 @@ GPXParser.prototype.addTrackSegmentToMap = function(trackSegment, colour,
         strokeWeight: width,
         map: this.map
     });
+    return tpointarray;
 }
 
 GPXParser.prototype.addTrackToMap = function(track, colour, width) {
     var segments = track.getElementsByTagName("trkseg");
+    var res=Array();
     for(var i = 0; i < segments.length; i++) {
-        var segmentlatlngbounds = this.addTrackSegmentToMap(segments[i], colour,
-                width);
-    }
+        res = res.concat(this.addTrackSegmentToMap(segments[i], colour,
+                width));
+    };
+    return res;
+    
 }
 
 GPXParser.prototype.addRouteToMap = function(route, colour, width) {
@@ -287,9 +294,11 @@ GPXParser.prototype.centerAndZoomToLatLngBounds = function(latlngboundsarray) {
 
 GPXParser.prototype.addTrackpointsToMap = function() {
     var tracks = this.xmlDoc.documentElement.getElementsByTagName("trk");
+    var res=Array();
     for(var i = 0; i < tracks.length; i++) {
-        this.addTrackToMap(tracks[i], this.trackcolour, this.trackwidth);
+        res=res.concat(this.addTrackToMap(tracks[i], this.trackcolour, this.trackwidth));
     }
+    return res;
 }
 
 GPXParser.prototype.addWaypointsToMap = function() {

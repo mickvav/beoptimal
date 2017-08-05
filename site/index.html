@@ -73,18 +73,26 @@
   <body>
     <div id="map"></div>
     <div id="overlaybox-gps" class="overlay hidden" >
-      <h1>Загрузка трека</h1>
+      <h1>Открыть трек</h1>
       <p>Для сохранения трека можно воспользоваться любым приложением, умеющим сохранять трек в .gpx формате, например <a href="https://play.google.com/store/apps/details?id=com.mendhak.gpslogger">GPSLogger</a>
+      <p>Для продолжения выберите один или несколько gpx-файлов с вашими треками:
       <input type="file" id="gpsfiles" name="gpsfiles[]" multiple />
       <output id="gpslist"/> 
       
+   </div>
+   <div id="overlaybox-pay" class="overlay hidden" >
+      <h1>Открыть историию платежей</h1>
+      <p>Выберите файл (или несколько файлов) с историей платежей из личного кабинета банка:
+      <input type="file" id="payfiles" name="payfiles[]" multiple />
    </div> 
+
     <div id="upper-button-container" class="buttons upper-button"><a href="#" onClick="addTrack()">Добавить трек</a></div>
     <div id="center-button-container" class="buttons center-button"><a href="#" onClick="addPayments()">Добавить историю платежей</a></div>
     <div id="lower-button-container" class="buttons lower-button"><a href="#" onClick="showHelp()">Что это вообще такое?</a></div>
     <script>
  
       document.getElementById('gpsfiles').addEventListener('change', GPShandleFileSelect, false);
+      document.getElementById('payfiles').addEventListener('change', PAYhandleFileSelect, false);
       var map;    
 
       function initMap() {
@@ -94,7 +102,7 @@
           zoomControl: true,
           scaleControl: true
         });
-
+        map.tpointarray = Array();
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
             var pos = {

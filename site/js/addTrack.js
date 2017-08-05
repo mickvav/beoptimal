@@ -27,7 +27,7 @@ function GPShandleFileSelect(evt) {
            parser.setTrackWidth(5);
            parser.setMinTrackPointDelta(0.005);
            parser.centerAndZoom(xml);
-           parser.addTrackpointsToMap();  
+           map.tpointarray=map.tpointarray.concat(parser.addTrackpointsToMap());  
            parser.addRoutepointsToMap();
            parser.addWaypointsToMap(); 
            closeTrack();
