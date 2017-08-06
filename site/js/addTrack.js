@@ -31,6 +31,7 @@ function GPShandleFileSelect(evt) {
            parser.addRoutepointsToMap();
            parser.addWaypointsToMap(); 
            closeTrack();
+           UpdateSummary();
          };
        })(f);
        reader.readAsText(f);

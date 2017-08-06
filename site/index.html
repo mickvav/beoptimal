@@ -16,6 +16,12 @@
         margin: 0;
         padding: 0;
       }
+      h1 {
+        font-family: Helvetica;
+      }
+      p {
+        font-family: Helvetica;
+      }
       .buttons {
         height: 2cm;
         min-width: 20%;
@@ -49,7 +55,6 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        height: 4cm;
         width: 10cm;
         margin-top: -2cm;
         margin-left: -5cm;
@@ -64,12 +69,22 @@
       .visible {
         visibility: visible;
       }
+      .summary {
+        position: absolute;
+        bottom: 1cm;
+        left: 1cm;
+        padding: 0.5cm;
+        background-color: #f0f0f0;
+        border-radius: 0.3cm; 
+      }
+
     </style>
     <script src="js/jquery-3.2.1.min.js"></script>
     <script src="js/addTrack.js"></script>
     <script src="js/addPayments.js"></script>
     <script src="js/loadgpx.js"></script>
     <script src="js/papaparse.min.js"></script>
+    <script src="js/drawPoints.js"></script>
   </head>
   <body>
     <div id="map"></div>
@@ -86,6 +101,7 @@
       <p>Выберите файл (или несколько файлов) с историей платежей из личного кабинета банка:
       <input type="file" id="payfiles" name="payfiles[]" multiple />
    </div> 
+   <div id="summary-box" class="summary hidden"></div>
 
     <div id="upper-button-container" class="buttons upper-button"><a href="#" onClick="addTrack()">Добавить трек</a></div>
     <div id="center-button-container" class="buttons center-button"><a href="#" onClick="addPayments()">Добавить историю платежей</a></div>
@@ -95,7 +111,7 @@
       document.getElementById('gpsfiles').addEventListener('change', GPShandleFileSelect, false);
       document.getElementById('payfiles').addEventListener('change', PAYhandleFileSelect, false);
       var map;    
-
+      
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           zoom: 12,
@@ -104,6 +120,7 @@
           scaleControl: true
         });
         map.tpointarray = Array();
+        map.tpayarray = Array();
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
             var pos = {
@@ -121,6 +138,12 @@
         }
       };
 
+      function UpdateSummary() {
+        $("#summary-box").removeClass("hidden");
+        $("#summary-box").addClass("visible");
+        $("#summary-box").html("Точек траектории:"+map.tpointarray.length+
+            "<br>Платежей:"+map.tpayarray.length+"<br>");         DrawPayments();
+      };
 
       function handleLocationError(browserHasGeolocation, map, pos) {
         var infoWindow = new google.maps.InfoWindow({map: map});
