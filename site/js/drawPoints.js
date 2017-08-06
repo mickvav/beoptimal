@@ -12,9 +12,9 @@ function GuessPaymentsPositions() {
          };
       };
       j1=0;
-      jt1=(p.DateTime < track[0].time ? track[0].time : p.DateTime);
+      jt1=null;
       for(var j = 0, t; t = track[j]; j++) {
-         if(t.time < jt1 && t.time >=p.DateTime) {
+         if((jt1 == null || t.time < jt1) && t.time >=p.DateTime) {
              j1=j;
              jt1=t.time;
          };
